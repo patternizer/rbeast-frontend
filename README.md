@@ -1,6 +1,8 @@
+![image](https://github.com/patternizer/rbeast-frontend/blob/master/rbeast-040011.png)
+
 # rbeast-frontend
 
-Python + R front-end for changepoint detection using Rbeast in monthly land surface air temperature monitoring station timeseries from CRUTEM5 in the [GloSAT](https://www.glosat.org) project:
+Python + R front-end for changepoint detection using Rbeast in monthly land surface air temperature monitoring station timeseries from CRUTEM5 in the [GloSAT](https://www.glosat.org) project: www.glosat.org
 
 * python code to prepare station data, call Rbeast and return output arrays for plotting extracted trend, seasonality, changepoints and 95% credible intervals
 
