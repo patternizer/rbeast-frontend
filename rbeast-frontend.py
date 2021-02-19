@@ -54,7 +54,7 @@ warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 # SETTINGS: 
 #------------------------------------------------------------------------------
 
-fontsize = 20
+fontsize = 12
 
 #------------------------------------------------------------------------------
 # LOAD: station(s) monthly data (CRUTEM format)
@@ -189,7 +189,7 @@ for i in range(n):
 plt.plot(dg['mean'].dropna().rolling(12).mean(), marker='.', ls='None', color='black', alpha=1.0, label='Annual mean')
 ax.xaxis.grid(True, which='major')      
 ax.yaxis.grid(True, which='major')  
-plt.tick_params(labelsize=16)    
+plt.tick_params(labelsize=fontsize)    
 plt.legend(loc='upper left', bbox_to_anchor=(1.04,1), ncol=3, fontsize=8)
 plt.xlabel('Year', fontsize=fontsize)
 plt.ylabel(r'Temperature anomaly (from 1961-1990) [K]', fontsize=fontsize)
@@ -208,8 +208,8 @@ for i in range(n):
     ts_monthly = np.array(da.groupby('year').mean().iloc[:,1:]).ravel() 
     t_monthly = pd.date_range(start=str(da['year'].iloc[0]), periods=len(ts_monthly), freq='M')           
     dg = pd.DataFrame({'t':t_monthly,'ts':ts_monthly})
-    dg = dg.replace(r'^\s+$', np.nan, regex=True)
-    dg.to_csv('dg.csv', index=False)
+    dg = dg.replace(r'^\s+$', np.nan, regex=True)   # replace space with NaN (meeded for rbeast.frontend.R)
+    dg.to_csv('dg.csv', index=False)                # R input station file
     code = df['stationcode'].unique()[i]
 
     command = '/usr/bin/Rscript'
@@ -233,45 +233,43 @@ for i in range(n):
     out_seasonal_order = pd.read_csv('out_seasonal_order.csv') # harmonic order
     out_seasonal_cp = pd.read_csv('out_seasonal_cp.csv').dropna().astype(int).values
 
-    titlestr = 'Rbeast: ' + df['stationcode'].unique()[i]
-    figstr = "rbeast-" + df['stationcode'].unique()[i] + '.png'
+    titlestr = 'Rbeast: ' + code
+    figstr = "rbeast-" + code + '.png'
 
     fig, axes = plt.subplots(5,1,sharex=True, figsize=(15,10))      
-    axes[0].set_title(titlestr, fontsize=fontsize)
+    axes[0].set_title(titlestr, fontsize=20)
     axes[0].plot(t_monthly, ts_monthly, lw=1, color=hexcolors[i], alpha=1.0)
     axes[0].xaxis.grid(True, which='major')      
     axes[0].yaxis.grid(True, which='major')  
-    axes[0].legend(loc='upper left', fontsize=8)
-    axes[0].set_ylabel('anomaly [°C]')
+    axes[0].set_ylabel('anomaly [°C]', fontsize=fontsize)
+    axes[0].tick_params(labelsize=fontsize)    
     axes[1].plot(t_monthly, out_trend, lw=2, color='red', alpha=1.0)
-#    axes[1].fill_between(t_monthly, np.array(out_trend)-np.array(out_trend_CI_lower), np.array(out_trend)+np.array(out_trend_CI_upper), color='lightgrey', alpha=1.0, label='95% credible interval')
     axes[1].fill_between(t_monthly, np.array(out_trend_CI_lower), np.array(out_trend_CI_upper), color='lightgrey', alpha=1.0)
     for i in range(len(out_trend_cp)):
         axes[1].axvline(x=t_monthly[out_trend_cp[i]], linestyle='dashed', color='blue')
     axes[1].xaxis.grid(True, which='major')      
     axes[1].yaxis.grid(True, which='major')  
-    axes[1].legend(loc='upper left', fontsize=12)
-    axes[1].set_ylabel('trend [°C]')
+    axes[1].set_ylabel('trend [°C]', fontsize=fontsize)
+    axes[1].tick_params(labelsize=fontsize)    
     axes[2].plot(t_monthly, out_trend_prob, lw=1, color='blue', alpha=1.0)
     axes[2].xaxis.grid(True, which='major')      
     axes[2].yaxis.grid(True, which='major')  
-    axes[2].legend(loc='upper left', fontsize=12)
-    axes[2].set_ylabel('P(trend)')
+    axes[2].set_ylabel('P(trend)', fontsize=fontsize)
+    axes[2].tick_params(labelsize=fontsize)    
     axes[3].plot(t_monthly, out_seasonal, lw=2, color='red', alpha=1.0)
     axes[3].fill_between(t_monthly, np.array(out_seasonal_CI_lower), np.array(out_seasonal_CI_upper), color='lightgrey', alpha=1.0)
     for i in range(len(out_seasonal_cp)):
         axes[3].axvline(x=t_monthly[out_seasonal_cp[i]], linestyle='dashed', color='blue')
     axes[3].xaxis.grid(True, which='major')      
     axes[3].yaxis.grid(True, which='major')  
-    axes[3].legend(loc='upper left', fontsize=12)
-    axes[3].set_ylabel('seasonal [°C]')
+    axes[3].set_ylabel('seasonal [°C]', fontsize=fontsize)
+    axes[3].tick_params(labelsize=fontsize)    
     axes[4].plot(t_monthly, out_seasonal_prob, lw=1, color='blue', alpha=1.0)
     axes[4].xaxis.grid(True, which='major')      
     axes[4].yaxis.grid(True, which='major')  
-    axes[4].legend(loc='upper left', fontsize=12)
-    axes[4].set_ylabel('P(seasonal)')
+    axes[4].set_ylabel('P(seasonal)', fontsize=fontsize)
     axes[4].set_xlabel('Year', fontsize=fontsize)
-#    axes[4].tick_params(labelsize=16)    
+    axes[4].tick_params(labelsize=fontsize)    
     plt.savefig(figstr)
     plt.close(fig)
 

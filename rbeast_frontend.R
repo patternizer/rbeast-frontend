@@ -78,7 +78,7 @@ out_seasonal_CI <- c(out$sCI)
 out_seasonal_order <- c(out$horder)
 out_seasonal_cp <- c(out$scp)
 
-setwd("~/Desktop/Rbeast/")
+#setwd("~/Desktop/Rbeast/")
 write.csv(out_trend, "out_trend.csv", row.names=FALSE)
 write.csv(out_trend_prob, "out_trend_prob.csv", row.names=FALSE)
 write.csv(out_trend_CI, "out_trend_CI.csv", row.names=FALSE)
