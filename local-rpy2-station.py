@@ -21,22 +21,13 @@
 import numpy as np
 import pandas as pd
 # Plotting libraries:
-import matplotlib
-matplotlib.use('agg')
 import matplotlib.pyplot as plt
-# OS libraries:
-import os
-from  optparse import OptionParser
-import sys
 # R libraries:
-import subprocess
-from subprocess import Popen
 import rpy2
 import rpy2.robjects as robjects
 from rpy2.robjects.packages import importr
 base = importr('base')
 utils = importr('utils')
-#utils.chooseCRANmirror(ind=1) # 1st mirror
 Rbeast = importr('Rbeast')
 readr = importr('readr')
 
