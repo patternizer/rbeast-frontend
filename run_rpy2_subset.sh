@@ -5,5 +5,6 @@ SBATCH -o %j.out
 SBATCH -e %j.err 
 SBATCH --time=30:00
 
-module load jaspy
+conda activate
+conda activate renv
 python run_rpy2_subset.py Iceland21.postmerge

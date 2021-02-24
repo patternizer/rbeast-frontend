@@ -5,6 +5,7 @@ SBATCH -o %j.out
 SBATCH -e %j.err 
 SBATCH --time=30:00
 
-module load jaspy
+conda activate
+conda activate renv
 python rbeast-frontend-runnable-rpy2-station.py stationfile.txt
 
