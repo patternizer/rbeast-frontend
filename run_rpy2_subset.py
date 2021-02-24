@@ -51,7 +51,8 @@ def make_shell_command(filename,directory,stationcode):
         fp.write('SBATCH -o %j.out')
         fp.write('SBATCH -e %j.err') 
         fp.write('SBATCH --time=30:00')
-        fp.write('module load jaspy')
+        fp.write('conda activate')
+        fp.write('conda activate renv')
         fp.write(job_str)    
 
     os.chmod(job_file,stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
@@ -65,7 +66,7 @@ def run_all_stations(filename):
     #-----------------------------------
     # EDIT: extract list of stationcodes
     #-----------------------------------
-    # stationcode =
+    stationcode = '040300'
 
     directory = '/users/mtaylor/checkouts/rbeast-frontend/{0:06d}'.format(stationcode)
     make_shell_command(filename,directory,stationcode)       
