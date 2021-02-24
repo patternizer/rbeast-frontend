@@ -22,7 +22,7 @@ data(modis_ohio)
 # SET: output directory
 
 #getwd()
-setwd("~/Desktop/Rbeast/PLOTS/")
+setwd("PLOTS/")
 
 # PLOT: timeseries
 

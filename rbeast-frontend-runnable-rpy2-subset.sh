@@ -6,4 +6,5 @@ SBATCH -e %j.err
 SBATCH --time=30:00
 
 module load jaspy
-python rbeast-frontend-runnable.py Iceland21.postmerge 040011
+python rbeast-frontend-runnable-rpy2-subset.py Iceland21.postmerge 040011
+

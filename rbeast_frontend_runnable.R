@@ -1,4 +1,4 @@
-#!/usr/bin/Rscript
+#!/apps/jasmin/jaspy/miniconda_envs/jaspy3.7/m3-4.6.14/envs/jaspy3.7-m3-4.6.14-r20200606/bin/Rscript
 
 # ENABLE command line arguments
 args <- commandArgs(TRUE)
