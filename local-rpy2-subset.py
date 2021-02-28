@@ -52,10 +52,12 @@ warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 
 filename = 'Iceland21.postmerge'
 code = '040011'
-use_normals = True
 
 fontsize = 12
+period = 12 # monthly
 use_rpy2 = True
+use_defaults = True
+use_normals = True
 normalsfile = 'normals5.GloSAT.prelim03_FRYuse_ocPLAUS1_iqr3.600reg0.3_19411990_MIN15_OCany_19611990_MIN15_PERDEC00_NManySDreq.txt'
 file_in = filename
 file_out = code + ".png"
@@ -189,10 +191,49 @@ if use_rpy2 == True:
     # Call Rbeast
 
     ts = robjects.FloatVector(ts_monthly)
-    opt = robjects.r.list(period=12, minSeasonOrder=2, maxSeasonOrder=8, minTrendOrder=0, maxTrendOrder=3, minSepDist_Season=120, minSepDist_Trend=120, maxKnotNum_Season=5, maxKnotNum_Trend=5, printToScreen=0, chainNumber=2, sample=1000, thinningFactor=3, burnin=500, maxMoveStepSize=120, resamplingSeasonOrderProb=0.2, resamplingTrendOrderProb=0.2, seed=42, computeCredible=1, fastCIComputation=1, computeSlopeSign=0, computeHarmonicOrder=1, computeTrendOrder=1, outputToDisk=0)
-    out = robjects.r.beast(ts, opt)
+    if use_defaults == True:
+        opt = robjects.r.list(period=period, computeCredible=1, computeHarmonicOrder=1, computeTrendOrder=1)
+        out = robjects.r.beast(ts, opt)
+    else:
+        opt = robjects.r.list(period=period, minSeasonOrder=2, maxSeasonOrder=8, minTrendOrder=0, maxTrendOrder=3, minSepDist_Season=120, minSepDist_Trend=120, maxKnotNum_Season=5, maxKnotNum_Trend=5, printToScreen=0, chainNumber=2, sample=1000, thinningFactor=3, burnin=500, maxMoveStepSize=120, resamplingSeasonOrderProb=0.2, resamplingTrendOrderProb=0.2, seed=42, computeCredible=1, fastCIComputation=1, computeSlopeSign=0, computeHarmonicOrder=1, computeTrendOrder=1, outputToDisk=0)
+        out = robjects.r.beast(ts, opt)
 
-    #    print(out.names)
+    # Rbeast DEFAULTS: 
+    #
+    #   opt$period=12 
+    #   opt$startTime=1.000000
+    #   opt$timeInterval=1.000000
+    #   opt$minSeasonOrder=1
+    #   opt$maxSeasonOrder=5
+    #   opt$minTrendOrder=0
+    #   opt$maxTrendOrder=1
+    #   opt$minSepDist_Trend=6
+    #   opt$minSepDist_Season=6
+    #   opt$maxKnotNum_Trend=617
+    #   opt$maxKnotNum_Season=617
+    #   opt$maxMoveStepSize=3
+    #   opt$samples=3000
+    #   opt$thinningFactor=1
+    #   opt$burnin=200
+    #   opt$chainNumber=3
+    #   opt$resamplingTrendOrderProb=0.100000
+    #   opt$resamplingSeasonOrderProb=0.170000
+    #   opt$omissionValue=-9999.000000
+    #   opt$seed=0
+    #   opt$outputToDisk=0
+    #   opt$outputFolder=NOT USED
+    #   opt$lengthPerTimeSeries_infile=4332
+    #   opt$printToScreen=0
+    #   opt$printCharLen=80
+    #   opt$computeCredible=1
+    #   opt$fastCIComputation=1
+    #   opt$computeChangepoints=1
+    #   opt$computeSlopeSign=0
+    #   opt$computeHarmonicOrder=1
+    #   opt$computeTrendOrder=1
+
+    # Rbeast OUTPUTS:
+    #
     # [1] "time"     "sN"       "tN"       "sNProb"   "tNProb"   "sProb"   
     # [7] "tProb"    "s"        "sCI"      "sSD"      "t"        "tCI"     
     #[13] "tSD"      "b"        "bCI"      "bSD"      "marg_lik" "sig2"    
