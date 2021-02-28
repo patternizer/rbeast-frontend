@@ -20,8 +20,16 @@
 # Dataframe libraries:
 import numpy as np
 import pandas as pd
+# Long time series support:
+import xarray as xr
+from datetime import datetime
+import nc_time_axis
+import cftime
 # Plotting libraries:
 import matplotlib.pyplot as plt
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
+import matplotlib.dates as mdates
 # R libraries:
 import rpy2
 import rpy2.robjects as robjects
@@ -30,7 +38,6 @@ base = importr('base')
 utils = importr('utils')
 Rbeast = importr('Rbeast')
 readr = importr('readr')
-
 # Silence library version notifications
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -62,7 +69,7 @@ if use_rpy2 == True:
     obs = []
     for i in range(nheader,len(lines)):
         words = lines[i].split()    
-        if len(words) == 9:
+        if len(words) != 13:
             stationcode = '0'+words[0][0:6]
         elif len(words) == 13:
             date = int(words[0])
@@ -154,13 +161,29 @@ if use_rpy2 == True:
 
     # Generate station file format for R
 
-    ts_monthly = np.array(da.groupby('year').mean().iloc[:,1:]).ravel() 
-    t_monthly = pd.date_range(start=str(da['year'].iloc[0]), periods=len(ts_monthly), freq='M')  
-        
+    ts_monthly = np.array(da.groupby('year').mean().iloc[:,0:]).ravel() 
+
+    # FIX: pandas <1678 and >2262 calendar limit
+
+    if da['year'][0] > 1678:
+        t_monthly = pd.date_range(start=str(da['year'].iloc[0]), periods=len(ts_monthly), freq='M')          
+    else:
+        t_monthly_xr = xr.cftime_range(start=str(da['year'].iloc[0]), periods=len(ts_monthly), freq='M', calendar='gregorian')     
+        year = [t_monthly_xr[i].year for i in range(len(t_monthly_xr))]
+        year_frac = []
+        for i in range(len(t_monthly_xr)):
+            if i%12 == 0:
+                istart = i
+                iend = istart+11   
+                frac = np.cumsum([t_monthly_xr[istart+j].day for j in range(12)])
+                year_frac += list(frac/frac[-1])
+            else:
+                i += 1
+        year_decimal = [float(year[i])+year_frac[i] for i in range(len(year))]    
+        t_monthly = year_decimal
+    
     # Call Rbeast
  
-#   robjects.r('sink("/dev/null")')
-
     ts = robjects.FloatVector(ts_monthly)
     opt = robjects.r.list(period=12, minSeasonOrder=2, maxSeasonOrder=8, minTrendOrder=0, maxTrendOrder=3, minSepDist_Season=120, minSepDist_Trend=120, maxKnotNum_Season=5, maxKnotNum_Trend=5, printToScreen=0, chainNumber=2, sample=1000, thinningFactor=3, burnin=500, maxMoveStepSize=120, resamplingSeasonOrderProb=0.2, resamplingTrendOrderProb=0.2, seed=42, computeCredible=1, fastCIComputation=1, computeSlopeSign=0, computeHarmonicOrder=1, computeTrendOrder=1, outputToDisk=0)
     out = robjects.r.beast(ts, opt)
