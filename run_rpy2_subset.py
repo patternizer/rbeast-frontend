@@ -3,8 +3,8 @@
 #------------------------------------------------------------------------------
 # PROGRAM: run_rbeast.py
 #------------------------------------------------------------------------------
-# Version 0.1
-# 23 February, 2021
+# Version 0.2
+# 28 February, 2021
 # Michael Taylor
 # https://patternizer.github.io
 # patternizer AT gmail DOT com
@@ -27,7 +27,7 @@ import stat
 from  optparse import OptionParser
 import subprocess
 
-def make_shell_command(filename,directory,stationcode):
+def make_shell_command(filename,stationcode):
          
     currentdir = os.getcwd()
     outdir = '{0}/{1}'.\
@@ -36,9 +36,9 @@ def make_shell_command(filename,directory,stationcode):
         os.makedirs(outdir)
     os.chdir(outdir)
     try:
-        os.symlink('~/checkouts/rbeast-frontend/rbeast-frontend-runnable-rpy2-subset.py','rbeast-frontend-runnable-rpy2-subset.py')
-        os.symlink('~/checkouts/rbeast-frontend/Iceland21.postmerge','Iceland21.postmerge')
-        os.symlink('~/checkouts/rbeast-frontend/normals5.GloSAT.prelim03_FRYuse_ocPLAUS1_iqr3.600reg0.3_19411990_MIN15_OCany_19611990_MIN15_PERDEC00_NManySDreq.txt','normals5.GloSAT.prelim03_FRYuse_ocPLAUS1_iqr3.600reg0.3_19411990_MIN15_OCany_19611990_MIN15_PERDEC00_NManySDreq.txt')
+        os.symlink('../rbeast-frontend-runnable-rpy2-subset.py','rbeast-frontend-runnable-rpy2-subset.py')
+        os.symlink('../rbeast-frontend/Iceland21.postmerge','Iceland21.postmerge')
+        os.symlink('../rbeast-frontend/normals5.GloSAT.prelim03_FRYuse_ocPLAUS1_iqr3.600reg0.3_19411990_MIN15_OCany_19611990_MIN15_PERDEC00_NManySDreq.txt','normals5.GloSAT.prelim03_FRYuse_ocPLAUS1_iqr3.600reg0.3_19411990_MIN15_OCany_19611990_MIN15_PERDEC00_NManySDreq.txt')
     except:
         pass
 
@@ -64,13 +64,15 @@ def make_shell_command(filename,directory,stationcode):
 
 def run_all_stations(filename):
 
-    #-----------------------------------
-    # EDIT: extract list of stationcodes
-    #-----------------------------------
-    stationcode = '040300'
-
-    directory = '~/checkouts/rbeast-frontend/{0}'.format(stationcode)
-    make_shell_command(filename,directory,stationcode)       
+    nheader = 0
+    f = open(filename)
+    lines = f.readlines()
+    for i in range(nheader,len(lines)):
+        words = lines[i].split()    
+        if len(words) == 9:
+            stationcode = '0'+words[0][0:6]
+            make_shell_command(filename,stationcode)       
+    f.close()    
  
 if __name__ == "__main__":
     
